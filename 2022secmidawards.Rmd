@@ -1,0 +1,643 @@
+---
+title: "2022MidseasonSECAwards"
+author: "Colin Sanders"
+date: "4/16/2022"
+output: pdf_document
+---
+
+```{r UGA 21, message=FALSE, warning=FALSE}
+data<-ncaa_scrape(257, 2022, type = "batting")
+dat.starters=subset(data, AB > 0)
+dat.starters$OPS<-c(dat.starters$OBPct + dat.starters$SlgPct)
+dat.starters[is.na(dat.starters)] = 0
+dat.starters$single=dat.starters$H-(dat.starters$`2B`+ dat.starters$`3B` + dat.starters$HR)
+dat.starters$wOBA=c(.69*dat.starters$BB + .722*dat.starters$HBP + 0.888*dat.starters$single + 1.271*dat.starters$`2B` + 1.616*dat.starters$`3B` + 2.101*dat.starters$HR)/(dat.starters$AB + dat.starters$BB + dat.starters$SF + dat.starters$HBP)
+dat.starters$babip<-(dat.starters$H-dat.starters$HR)/(dat.starters$AB-dat.starters$K-dat.starters$HR+dat.starters$SF)
+wOBA.UGA<-mean(dat.starters$wOBA)
+dat.starters$PA=c(dat.starters$AB + dat.starters$BB + dat.starters$HBP + dat.starters$SF)
+tPA<-sum(dat.starters$AB + dat.starters$BB + dat.starters$HBP + dat.starters$SF)
+dat.starters$weightedPA<-c(dat.starters$PA/tPA)
+wwoba<-sum(dat.starters$weightedPA*dat.starters$wOBA)
+dat.starters$kRate<-(dat.starters$K/dat.starters$PA)*100
+dat.starters$BBrate<-(dat.starters$BB/dat.starters$PA)*100
+a<-dat.starters$wOBA-.350
+b<-a/1.15
+wraa<-b*dat.starters$PA
+dat.starters$wraa<-c(wraa)
+dat.starters$iso<-dat.starters$SlgPct-dat.starters$BA
+dat.starters$wrc<-(dat.starters$wraa)+(.15)*dat.starters$PA
+dat.starters$wrcplus<-c(((dat.starters$wraa/dat.starters$PA + 0.15) + (.15 - 1.066 * .15))/(sum(dat.starters$wrc)/sum(dat.starters$PA)))*100
+```
+```{r Vandy 21, warning=FALSE, include=FALSE}
+data.vu<-ncaa_scrape(736, 2022, type = "batting")
+dat.starters.vu=subset(data.vu, AB > 0)
+dat.starters.vu$OPS<-c(dat.starters.vu$OBPct + dat.starters.vu$SlgPct)
+dat.starters.vu[is.na(dat.starters.vu)] = 0
+dat.starters.vu$single=dat.starters.vu$H-(dat.starters.vu$`2B`+ dat.starters.vu$`3B` + dat.starters.vu$HR)
+dat.starters.vu$wOBA=c(.69*dat.starters.vu$BB + .722*dat.starters.vu$HBP + 0.888*dat.starters.vu$single + 1.271*dat.starters.vu$`2B` + 1.616*dat.starters.vu$`3B` + 2.101*dat.starters.vu$HR)/(dat.starters.vu$AB + dat.starters.vu$BB + dat.starters.vu$SF + dat.starters.vu$HBP)
+wOBA.vu<-mean(dat.starters.vu$wOBA)
+dat.starters.vu$PA=c(dat.starters.vu$AB + dat.starters.vu$BB + dat.starters.vu$HBP + dat.starters.vu$SF)
+tPA.vu<-sum(dat.starters.vu$AB + dat.starters.vu$BB + dat.starters.vu$HBP + dat.starters.vu$SF)
+dat.starters.vu$weightedPA<-c(dat.starters.vu$PA/tPA.vu)
+wwoba.vu<-sum(dat.starters.vu$weightedPA*dat.starters.vu$wOBA)
+dat.starters.vu$babip<-(dat.starters.vu$H-dat.starters.vu$HR)/(dat.starters.vu$AB-dat.starters.vu$K-dat.starters.vu$HR+dat.starters.vu$SF)
+dat.starters.vu$kRate<-(dat.starters.vu$K/dat.starters.vu$PA)*100
+dat.starters.vu$BBrate<-(dat.starters.vu$BB/dat.starters.vu$PA)*100
+a<-dat.starters.vu$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.vu$PA
+dat.starters.vu$wraa<-c(wraa)
+dat.starters.vu$iso<-dat.starters.vu$SlgPct-dat.starters.vu$BA
+dat.starters.vu$wrc<-(dat.starters.vu$wraa)+(.15)*dat.starters.vu$PA
+dat.starters.vu$wrcplus<-c(((dat.starters.vu$wraa/dat.starters.vu$PA + 0.15) + (.15 - .960 * .15))/(sum(dat.starters.vu$wrc)/sum(dat.starters.vu$PA)))*100
+```
+```{r Florida 21, warning=FALSE, include=FALSE}
+data.uf<-ncaa_scrape(235, 2022, type = "batting")
+dat.starters.uf=subset(data.uf, AB > 0)
+dat.starters.uf$OPS<-c(dat.starters.uf$OBPct + dat.starters.uf$SlgPct)
+dat.starters.uf[is.na(dat.starters.uf)] = 0
+dat.starters.uf$single=dat.starters.uf$H-(dat.starters.uf$`2B`+ dat.starters.uf$`3B` + dat.starters.uf$HR)
+dat.starters.uf$wOBA=c(.69*dat.starters.uf$BB + .722*dat.starters.uf$HBP + 0.888*dat.starters.uf$single + 1.271*dat.starters.uf$`2B` + 1.616*dat.starters.uf$`3B` + 2.101*dat.starters.uf$HR)/(dat.starters.uf$AB + dat.starters.uf$BB + dat.starters.uf$SF + dat.starters.uf$HBP)
+wOBA.UF<-mean(dat.starters.uf$wOBA)
+dat.starters.uf$PA=c(dat.starters.uf$AB + dat.starters.uf$BB + dat.starters.uf$HBP + dat.starters.uf$SF)
+tPA.uf<-sum(dat.starters.uf$AB + dat.starters.uf$BB + dat.starters.uf$HBP + dat.starters.uf$SF)
+dat.starters.uf$weightedPA<-c(dat.starters.uf$PA/tPA.uf)
+wwoba.uf<-sum(dat.starters.uf$weightedPA*dat.starters.uf$wOBA)
+dat.starters.uf$babip<-(dat.starters.uf$H-dat.starters.uf$HR)/(dat.starters.uf$AB-dat.starters.uf$K-dat.starters.uf$HR+dat.starters.uf$SF)
+dat.starters.uf$kRate<-(dat.starters.uf$K/dat.starters.uf$PA)*100
+dat.starters.uf$BBrate<-(dat.starters.uf$BB/dat.starters.uf$PA)*100
+a<-dat.starters.uf$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.uf$PA
+dat.starters.uf$wraa<-c(wraa)
+dat.starters.uf$iso<-dat.starters.uf$SlgPct-dat.starters.uf$BA
+dat.starters.uf$wrc<-(dat.starters.uf$wraa)+(.15)*dat.starters.uf$PA
+dat.starters.uf$wrcplus<-c(((dat.starters.uf$wraa/dat.starters.uf$PA + 0.15) + (.15 - 1.082 * .15))/(sum(dat.starters.uf$wrc)/sum(dat.starters.uf$PA)))*100
+```
+```{r Tennessee 21, warning=FALSE, include=FALSE}
+data.ut<-ncaa_scrape(694, 2022, type = "batting")
+dat.starters.ut=subset(data.ut, AB > 0)
+dat.starters.ut$OPS<-c(dat.starters.ut$OBPct + dat.starters.ut$SlgPct)
+dat.starters.ut[is.na(dat.starters.ut)] = 0
+dat.starters.ut$single=dat.starters.ut$H-(dat.starters.ut$`2B`+ dat.starters.ut$`3B` + dat.starters.ut$HR)
+dat.starters.ut$wOBA=c(.69*dat.starters.ut$BB + .722*dat.starters.ut$HBP + 0.888*dat.starters.ut$single + 1.271*dat.starters.ut$`2B` + 1.616*dat.starters.ut$`3B` + 2.101*dat.starters.ut$HR)/(dat.starters.ut$AB + dat.starters.ut$BB + dat.starters.ut$SF + dat.starters.ut$HBP)
+wOBA.UT<-mean(dat.starters.ut$wOBA)
+dat.starters.ut$PA=c(dat.starters.ut$AB + dat.starters.ut$BB + dat.starters.ut$HBP + dat.starters.ut$SF)
+tPA.ut<-sum(dat.starters.ut$AB + dat.starters.ut$BB + dat.starters.ut$HBP + dat.starters.ut$SF)
+dat.starters.ut$weightedPA<-c(dat.starters.ut$PA/tPA.ut)
+wwoba.ut<-sum(dat.starters.ut$weightedPA*dat.starters.ut$wOBA)
+dat.starters.ut$babip<-(dat.starters.ut$H-dat.starters.ut$HR)/(dat.starters.ut$AB-dat.starters.ut$K-dat.starters.ut$HR+dat.starters.ut$SF)
+dat.starters.ut$kRate<-(dat.starters.ut$K/dat.starters.ut$PA)*100
+dat.starters.ut$BBrate<-(dat.starters.ut$BB/dat.starters.ut$PA)*100
+a<-dat.starters.ut$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.ut$PA
+dat.starters.ut$wraa<-c(wraa)
+dat.starters.ut$iso<-dat.starters.ut$SlgPct-dat.starters.ut$BA
+dat.starters.ut$wrc<-(dat.starters.ut$wraa)+(.15)*dat.starters.ut$PA
+dat.starters.ut$wrcplus<-c(((dat.starters.ut$wraa/dat.starters.ut$PA + 0.15) + (.15 - .993 * .15))/(sum(dat.starters.ut$wrc)/sum(dat.starters.ut$PA)))*100
+```
+```{r Kentucky 21, warning=FALSE, include=FALSE}
+data.uk<-ncaa_scrape(334, 2022, type = "batting")
+dat.starters.uk=subset(data.uk, AB > 0)
+dat.starters.uk$OPS<-c(dat.starters.uk$OBPct + dat.starters.uk$SlgPct)
+dat.starters.uk[is.na(dat.starters.uk)] = 0
+dat.starters.uk$single=dat.starters.uk$H-(dat.starters.uk$`2B`+ dat.starters.uk$`3B` + dat.starters.uk$HR)
+dat.starters.uk$wOBA=c(.69*dat.starters.uk$BB + .722*dat.starters.uk$HBP + 0.888*dat.starters.uk$single + 1.271*dat.starters.uk$`2B` + 1.616*dat.starters.uk$`3B` + 2.101*dat.starters.uk$HR)/(dat.starters.uk$AB + dat.starters.uk$BB + dat.starters.uk$SF + dat.starters.uk$HBP)
+dat.starters.uk$kRate<-(dat.starters.uk$K/dat.starters.uk$AB)*100
+dat.starters.uk$BBrate<-(dat.starters.uk$BB/dat.starters.uk$AB)*100
+wOBA.Uk<-mean(dat.starters.uk$wOBA)
+dat.starters.uk$PA=c(dat.starters.uk$AB + dat.starters.uk$BB + dat.starters.uk$HBP + dat.starters.uk$SF)
+tPA.uk<-sum(dat.starters.uk$AB + dat.starters.uk$BB + dat.starters.uk$HBP + dat.starters.uk$SF)
+dat.starters.uk$weightedPA<-c(dat.starters.uk$PA/tPA.uk)
+wwoba.uk<-sum(dat.starters.uk$weightedPA*dat.starters.uk$wOBA)
+dat.starters.uk$babip<-(dat.starters.uk$H-dat.starters.uk$HR)/(dat.starters.uk$AB-dat.starters.uk$K-dat.starters.uk$HR+dat.starters.uk$SF)
+dat.starters.uk$kRate<-(dat.starters.uk$K/dat.starters.uk$PA)*100
+dat.starters.uk$BBrate<-(dat.starters.uk$BB/dat.starters.uk$PA)*100
+a<-dat.starters.uk$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.uk$PA
+dat.starters.uk$wraa<-c(wraa)
+dat.starters.uk$iso<-dat.starters.uk$SlgPct-dat.starters.uk$BA
+dat.starters.uk$wrc<-(dat.starters.uk$wraa)+(.15)*dat.starters.uk$PA
+dat.starters.uk$wrcplus<-c(((dat.starters.uk$wraa/dat.starters.uk$PA + 0.15) + (.15 - 1.055 * .15))/(sum(dat.starters.uk$wrc)/sum(dat.starters.uk$PA)))*100
+```
+```{r Missouri 21, warning=FALSE, include=FALSE}
+data.um<-ncaa_scrape(434, 2022, type = "batting")
+dat.starters.um=subset(data.um, AB > 0)
+dat.starters.um$OPS<-c(dat.starters.um$OBPct + dat.starters.um$SlgPct)
+dat.starters.um[is.na(dat.starters.um)] = 0
+dat.starters.um$single=dat.starters.um$H-(dat.starters.um$`2B`+ dat.starters.um$`3B` + dat.starters.um$HR)
+dat.starters.um$wOBA=c(.69*dat.starters.um$BB + .722*dat.starters.um$HBP + 0.888*dat.starters.um$single + 1.271*dat.starters.um$`2B` + 1.616*dat.starters.um$`3B` + 2.101*dat.starters.um$HR)/(dat.starters.um$AB + dat.starters.um$BB + dat.starters.um$SF + dat.starters.um$HBP)
+dat.starters.um$kRate<-(dat.starters.um$K/dat.starters.um$AB)*100
+dat.starters.um$BBrate<-(dat.starters.um$BB/dat.starters.um$AB)*100
+wOBA.Um<-mean(dat.starters.um$wOBA)
+dat.starters.um$PA=c(dat.starters.um$AB + dat.starters.um$BB + dat.starters.um$HBP + dat.starters.um$SF)
+tPA.um<-sum(dat.starters.um$AB + dat.starters.um$BB + dat.starters.um$HBP + dat.starters.um$SF)
+dat.starters.um$weightedPA<-c(dat.starters.um$PA/tPA.um)
+wwoba.um<-sum(dat.starters.um$weightedPA*dat.starters.um$wOBA)
+dat.starters.um$babip<-(dat.starters.um$H-dat.starters.um$HR)/(dat.starters.um$AB-dat.starters.um$K-dat.starters.um$HR+dat.starters.um$SF)
+dat.starters.um$kRate<-(dat.starters.um$K/dat.starters.um$PA)*100
+dat.starters.um$BBrate<-(dat.starters.um$BB/dat.starters.um$PA)*100
+a<-dat.starters.um$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.um$PA
+dat.starters.um$wraa<-c(wraa)
+dat.starters.um$iso<-dat.starters.um$SlgPct-dat.starters.um$BA
+dat.starters.um$wrc<-(dat.starters.um$wraa)+(.15)*dat.starters.um$PA
+dat.starters.um$wrcplus<-c(((dat.starters.um$wraa/dat.starters.um$PA + 0.15) + (.15 - 1.042 * .15))/(sum(dat.starters.um$wrc)/sum(dat.starters.um$PA)))*100
+```
+```{r South Carolina 21, warning=FALSE, include=FALSE}
+data.uscj<-ncaa_scrape(648, 2022, type = "batting")
+dat.starters.uscj=subset(data.uscj, AB > 0)
+dat.starters.uscj$OPS<-c(dat.starters.uscj$OBPct + dat.starters.uscj$SlgPct)
+dat.starters.uscj[is.na(dat.starters.uscj)] = 0
+dat.starters.uscj$single=dat.starters.uscj$H-(dat.starters.uscj$`2B`+ dat.starters.uscj$`3B` + dat.starters.uscj$HR)
+dat.starters.uscj$wOBA=c(.69*dat.starters.uscj$BB + .722*dat.starters.uscj$HBP + 0.888*dat.starters.uscj$single + 1.271*dat.starters.uscj$`2B` + 1.616*dat.starters.uscj$`3B` + 2.101*dat.starters.uscj$HR)/(dat.starters.uscj$AB + dat.starters.uscj$BB + dat.starters.uscj$SF + dat.starters.uscj$HBP)
+wOBA.uscj<-mean(dat.starters.uscj$wOBA)
+dat.starters.uscj$PA=c(dat.starters.uscj$AB + dat.starters.uscj$BB + dat.starters.uscj$HBP + dat.starters.uscj$SF)
+tPA.uscj<-sum(dat.starters.uscj$AB + dat.starters.uscj$BB + dat.starters.uscj$HBP + dat.starters.uscj$SF)
+dat.starters.uscj$weightedPA<-c(dat.starters.uscj$PA/tPA.uscj)
+wwoba.uscj<-sum(dat.starters.uscj$weightedPA*dat.starters.uscj$wOBA)
+dat.starters.uscj$babip<-(dat.starters.uscj$H-dat.starters.uscj$HR)/(dat.starters.uscj$AB-dat.starters.uscj$K-dat.starters.uscj$HR+dat.starters.uscj$SF)
+dat.starters.uscj$kRate<-(dat.starters.uscj$K/dat.starters.uscj$PA)*100
+dat.starters.uscj$BBrate<-(dat.starters.uscj$BB/dat.starters.uscj$PA)*100
+a<-dat.starters.uscj$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.uscj$PA
+dat.starters.uscj$wraa<-c(wraa)
+dat.starters.uscj$iso<-dat.starters.uscj$SlgPct-dat.starters.uscj$BA
+dat.starters.uscj$wrc<-(dat.starters.uscj$wraa)+(.15)*dat.starters.uscj$PA
+dat.starters.uscj$wrcplus<-c(((dat.starters.uscj$wraa/dat.starters.uscj$PA + 0.15) + (.15 - 1.017 * .15))/(sum(dat.starters.uscj$wrc)/sum(dat.starters.uscj$PA)))*100
+```
+```{r Arky 21, warning=FALSE, include=FALSE}
+data.ar.21<-ncaa_scrape(31, 2022, type = "batting")
+dat.starters.ar.21=subset(data.ar.21, AB > 0)
+dat.starters.ar.21$OPS<-c(dat.starters.ar.21$OBPct + dat.starters.ar.21$SlgPct)
+dat.starters.ar.21[is.na(dat.starters.ar.21)] = 0
+dat.starters.ar.21$single=dat.starters.ar.21$H-(dat.starters.ar.21$`2B`+ dat.starters.ar.21$`3B` + dat.starters.ar.21$HR)
+dat.starters.ar.21$wOBA=c(.69*dat.starters.ar.21$BB + .722*dat.starters.ar.21$HBP + 0.888*dat.starters.ar.21$single + 1.271*dat.starters.ar.21$`2B` + 1.616*dat.starters.ar.21$`3B` + 2.101*dat.starters.ar.21$HR)/(dat.starters.ar.21$AB + dat.starters.ar.21$BB + dat.starters.ar.21$SF + dat.starters.ar.21$HBP)
+wOBA.ar.21<-mean(dat.starters.ar.21$wOBA)
+dat.starters.ar.21$PA=c(dat.starters.ar.21$AB + dat.starters.ar.21$BB + dat.starters.ar.21$HBP + dat.starters.ar.21$SF)
+tPA.ar.21<-sum(dat.starters.ar.21$AB + dat.starters.ar.21$BB + dat.starters.ar.21$HBP + dat.starters.ar.21$SF)
+dat.starters.ar.21$weightedPA<-c(dat.starters.ar.21$PA/tPA.ar.21)
+wwoba.ar.21<-sum(dat.starters.ar.21$weightedPA*dat.starters.ar.21$wOBA)
+dat.starters.ar.21$babip<-(dat.starters.ar.21$H-dat.starters.ar.21$HR)/(dat.starters.ar.21$AB-dat.starters.ar.21$K-dat.starters.ar.21$HR+dat.starters.ar.21$SF)
+dat.starters.ar.21$kRate<-(dat.starters.ar.21$K/dat.starters.ar.21$PA)*100
+dat.starters.ar.21$BBrate<-(dat.starters.ar.21$BB/dat.starters.ar.21$PA)*100
+a<-dat.starters.ar.21$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.ar.21$PA
+dat.starters.ar.21$wraa<-c(wraa)
+dat.starters.ar.21$iso<-dat.starters.ar.21$SlgPct-dat.starters.ar.21$BA
+dat.starters.ar.21$wrc<-(dat.starters.ar.21$wraa)+(.15)*dat.starters.ar.21$PA
+dat.starters.ar.21$wrcplus<-c(((dat.starters.ar.21$wraa/dat.starters.ar.21$PA + 0.15) + (.15 - 1.113 * .15))/(sum(dat.starters.ar.21$wrc)/sum(dat.starters.ar.21$PA)))*100
+```
+```{r Miss state 21, warning=FALSE, include=FALSE}
+data.ms.21<-ncaa_scrape(430, 2022, type = "batting")
+dat.starters.ms.21=subset(data.ms.21, AB > 0)
+dat.starters.ms.21$OPS<-c(dat.starters.ms.21$OBPct + dat.starters.ms.21$SlgPct)
+dat.starters.ms.21[is.na(dat.starters.ms.21)] = 0
+dat.starters.ms.21$single=dat.starters.ms.21$H-(dat.starters.ms.21$`2B`+ dat.starters.ms.21$`3B` + dat.starters.ms.21$HR)
+dat.starters.ms.21$wOBA=c(.69*dat.starters.ms.21$BB + .722*dat.starters.ms.21$HBP + 0.888*dat.starters.ms.21$single + 1.271*dat.starters.ms.21$`2B` + 1.616*dat.starters.ms.21$`3B` + 2.101*dat.starters.ms.21$HR)/(dat.starters.ms.21$AB + dat.starters.ms.21$BB + dat.starters.ms.21$SF + dat.starters.ms.21$HBP)
+wOBA.ms.21<-mean(dat.starters.ms.21$wOBA)
+dat.starters.ms.21$PA=c(dat.starters.ms.21$AB + dat.starters.ms.21$BB + dat.starters.ms.21$HBP + dat.starters.ms.21$SF)
+tPA.ms.21<-sum(dat.starters.ms.21$AB + dat.starters.ms.21$BB + dat.starters.ms.21$HBP + dat.starters.ms.21$SF)
+dat.starters.ms.21$weightedPA<-c(dat.starters.ms.21$PA/tPA.ms.21)
+wwoba.ms.21<-sum(dat.starters.ms.21$weightedPA*dat.starters.ms.21$wOBA)
+dat.starters.ms.21$babip<-(dat.starters.ms.21$H-dat.starters.ms.21$HR)/(dat.starters.ms.21$AB-dat.starters.ms.21$K-dat.starters.ms.21$HR+dat.starters.ms.21$SF)
+dat.starters.ms.21$kRate<-(dat.starters.ms.21$K/dat.starters.ms.21$PA)*100
+dat.starters.ms.21$BBrate<-(dat.starters.ms.21$BB/dat.starters.ms.21$PA)*100
+a<-dat.starters.ms.21$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.ms.21$PA
+dat.starters.ms.21$wraa<-c(wraa)
+dat.starters.ms.21$iso<-dat.starters.ms.21$SlgPct-dat.starters.ms.21$BA
+dat.starters.ms.21$wrc<-(dat.starters.ms.21$wraa)+(.15)*dat.starters.ms.21$PA
+dat.starters.ms.21$wrcplus<-c(((dat.starters.ms.21$wraa/dat.starters.ms.21$PA + 0.15) + (.15 - 1.201 * .15))/(sum(dat.starters.ms.21$wrc)/sum(dat.starters.ms.21$PA)))*100
+```
+```{r Ole Miss 21, warning=FALSE, include=FALSE}
+data.om.21<-ncaa_scrape(433, 2022, type = "batting")
+dat.starters.om.21=subset(data.om.21, AB > 0)
+dat.starters.om.21$OPS<-c(dat.starters.om.21$OBPct + dat.starters.om.21$SlgPct)
+dat.starters.om.21[is.na(dat.starters.om.21)] = 0
+dat.starters.om.21$single=dat.starters.om.21$H-(dat.starters.om.21$`2B`+ dat.starters.om.21$`3B` + dat.starters.om.21$HR)
+dat.starters.om.21$wOBA=c(.69*dat.starters.om.21$BB + .722*dat.starters.om.21$HBP + 0.888*dat.starters.om.21$single + 1.271*dat.starters.om.21$`2B` + 1.616*dat.starters.om.21$`3B` + 2.101*dat.starters.om.21$HR)/(dat.starters.om.21$AB + dat.starters.om.21$BB + dat.starters.om.21$SF + dat.starters.om.21$HBP)
+wOBA.om.21<-mean(dat.starters.om.21$wOBA)
+dat.starters.om.21$PA=c(dat.starters.om.21$AB + dat.starters.om.21$BB + dat.starters.om.21$HBP + dat.starters.om.21$SF)
+tPA.om.21<-sum(dat.starters.om.21$AB + dat.starters.om.21$BB + dat.starters.om.21$HBP + dat.starters.om.21$SF)
+dat.starters.om.21$weightedPA<-c(dat.starters.om.21$PA/tPA.om.21)
+wwoba.om.21<-sum(dat.starters.om.21$weightedPA*dat.starters.om.21$wOBA)
+dat.starters.om.21$babip<-(dat.starters.om.21$H-dat.starters.om.21$HR)/(dat.starters.om.21$AB-dat.starters.om.21$K-dat.starters.om.21$HR+dat.starters.om.21$SF)
+dat.starters.om.21$kRate<-(dat.starters.om.21$K/dat.starters.om.21$PA)*100
+dat.starters.om.21$BBrate<-(dat.starters.om.21$BB/dat.starters.om.21$PA)*100
+a<-dat.starters.om.21$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.om.21$PA
+dat.starters.om.21$wraa<-c(wraa)
+dat.starters.om.21$iso<-dat.starters.om.21$SlgPct-dat.starters.om.21$BA
+dat.starters.om.21$wrc<-(dat.starters.om.21$wraa)+(.15)*dat.starters.om.21$PA
+dat.starters.om.21$wrcplus<-c(((dat.starters.om.21$wraa/dat.starters.om.21$PA + 0.15) + (.15 - 1.093 * .15))/(sum(dat.starters.om.21$wrc)/sum(dat.starters.om.21$PA)))*100
+```
+```{r LSU 21, warning=FALSE, include=FALSE}
+data.lsu.21<-ncaa_scrape(365, 2022, type = "batting")
+dat.starters.lsu.21=subset(data.lsu.21, AB > 0)
+dat.starters.lsu.21$OPS<-c(dat.starters.lsu.21$OBPct + dat.starters.lsu.21$SlgPct)
+dat.starters.lsu.21[is.na(dat.starters.lsu.21)] = 0
+dat.starters.lsu.21$single=dat.starters.lsu.21$H-(dat.starters.lsu.21$`2B`+ dat.starters.lsu.21$`3B` + dat.starters.lsu.21$HR)
+dat.starters.lsu.21$wOBA=c(.69*dat.starters.lsu.21$BB + .722*dat.starters.lsu.21$HBP + 0.888*dat.starters.lsu.21$single + 1.271*dat.starters.lsu.21$`2B` + 1.616*dat.starters.lsu.21$`3B` + 2.101*dat.starters.lsu.21$HR)/(dat.starters.lsu.21$AB + dat.starters.lsu.21$BB + dat.starters.lsu.21$SF + dat.starters.lsu.21$HBP)
+wOBA.lsu.21<-mean(dat.starters.lsu.21$wOBA)
+dat.starters.lsu.21$PA=c(dat.starters.lsu.21$AB + dat.starters.lsu.21$BB + dat.starters.lsu.21$HBP + dat.starters.lsu.21$SF)
+tPA.lsu.21<-sum(dat.starters.lsu.21$AB + dat.starters.lsu.21$BB + dat.starters.lsu.21$HBP + dat.starters.lsu.21$SF)
+dat.starters.lsu.21$weightedPA<-c(dat.starters.lsu.21$PA/tPA.lsu.21)
+wwoba.lsu.21<-sum(dat.starters.lsu.21$weightedPA*dat.starters.lsu.21$wOBA)
+dat.starters.lsu.21$babip<-(dat.starters.lsu.21$H-dat.starters.lsu.21$HR)/(dat.starters.lsu.21$AB-dat.starters.lsu.21$K-dat.starters.lsu.21$HR+dat.starters.lsu.21$SF)
+dat.starters.lsu.21$kRate<-(dat.starters.lsu.21$K/dat.starters.lsu.21$PA)*100
+dat.starters.lsu.21$BBrate<-(dat.starters.lsu.21$BB/dat.starters.lsu.21$PA)*100
+a<-dat.starters.lsu.21$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.lsu.21$PA
+dat.starters.lsu.21$wraa<-c(wraa)
+dat.starters.lsu.21$iso<-dat.starters.lsu.21$SlgPct-dat.starters.lsu.21$BA
+dat.starters.lsu.21$wrc<-(dat.starters.lsu.21$wraa)+(.15)*dat.starters.lsu.21$PA
+dat.starters.lsu.21$wrcplus<-c(((dat.starters.lsu.21$wraa/dat.starters.lsu.21$PA + 0.15) + (.15 - 1.104 * .15))/(sum(dat.starters.lsu.21$wrc)/sum(dat.starters.lsu.21$PA)))*100
+```
+```{r Bama 21, warning=FALSE, include=FALSE}
+data.al.21<-ncaa_scrape(8, 2022, type = "batting")
+dat.starters.al.21=subset(data.al.21, AB > 0)
+dat.starters.al.21$OPS<-c(dat.starters.al.21$OBPct + dat.starters.al.21$SlgPct)
+dat.starters.al.21[is.na(dat.starters.al.21)] = 0
+dat.starters.al.21$single=dat.starters.al.21$H-(dat.starters.al.21$`2B`+ dat.starters.al.21$`3B` + dat.starters.al.21$HR)
+dat.starters.al.21$wOBA=c(.69*dat.starters.al.21$BB + .722*dat.starters.al.21$HBP + 0.888*dat.starters.al.21$single + 1.271*dat.starters.al.21$`2B` + 1.616*dat.starters.al.21$`3B` + 2.101*dat.starters.al.21$HR)/(dat.starters.al.21$AB + dat.starters.al.21$BB + dat.starters.al.21$SF + dat.starters.al.21$HBP)
+wOBA.al.21<-mean(dat.starters.al.21$wOBA)
+dat.starters.al.21$PA=c(dat.starters.al.21$AB + dat.starters.al.21$BB + dat.starters.al.21$HBP + dat.starters.al.21$SF)
+tPA.al.21<-sum(dat.starters.al.21$AB + dat.starters.al.21$BB + dat.starters.al.21$HBP + dat.starters.al.21$SF)
+dat.starters.al.21$weightedPA<-c(dat.starters.al.21$PA/tPA.al.21)
+wwoba.al.21<-sum(dat.starters.al.21$weightedPA*dat.starters.al.21$wOBA)
+dat.starters.al.21$babip<-(dat.starters.al.21$H-dat.starters.al.21$HR)/(dat.starters.al.21$AB-dat.starters.al.21$K-dat.starters.al.21$HR+dat.starters.al.21$SF)
+dat.starters.al.21$kRate<-(dat.starters.al.21$K/dat.starters.al.21$PA)*100
+dat.starters.al.21$BBrate<-(dat.starters.al.21$BB/dat.starters.al.21$PA)*100
+a<-dat.starters.al.21$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.al.21$PA
+dat.starters.al.21$wraa<-c(wraa)
+dat.starters.al.21$iso<-dat.starters.al.21$SlgPct-dat.starters.al.21$BA
+dat.starters.al.21$wrc<-(dat.starters.al.21$wraa)+(.15)*dat.starters.al.21$PA
+dat.starters.al.21$wrcplus<-c(((dat.starters.al.21$wraa/dat.starters.al.21$PA + 0.15) + (.15 - 1.018 * .15))/(sum(dat.starters.al.21$wrc)/sum(dat.starters.al.21$PA)))*100
+```
+```{r Auburn 21, warning=FALSE, include=FALSE}
+data.au.21<-ncaa_scrape(37, 2022, type = "batting")
+dat.starters.au.21=subset(data.au.21, AB > 0)
+dat.starters.au.21$OPS<-c(dat.starters.au.21$OBPct + dat.starters.au.21$SlgPct)
+dat.starters.au.21[is.na(dat.starters.au.21)] = 0
+dat.starters.au.21$single=dat.starters.au.21$H-(dat.starters.au.21$`2B`+ dat.starters.au.21$`3B` + dat.starters.au.21$HR)
+dat.starters.au.21$wOBA=c(.69*dat.starters.au.21$BB + .722*dat.starters.au.21$HBP + 0.888*dat.starters.au.21$single + 1.271*dat.starters.au.21$`2B` + 1.616*dat.starters.au.21$`3B` + 2.101*dat.starters.au.21$HR)/(dat.starters.au.21$AB + dat.starters.au.21$BB + dat.starters.au.21$SF + dat.starters.au.21$HBP)
+wOBA.au.21<-mean(dat.starters.au.21$wOBA)
+dat.starters.au.21$PA=c(dat.starters.au.21$AB + dat.starters.au.21$BB + dat.starters.au.21$HBP + dat.starters.au.21$SF)
+tPA.au.21<-sum(dat.starters.au.21$AB + dat.starters.au.21$BB + dat.starters.au.21$HBP + dat.starters.au.21$SF)
+dat.starters.au.21$weightedPA<-c(dat.starters.au.21$PA/tPA.au.21)
+wwoba.au.21<-sum(dat.starters.au.21$weightedPA*dat.starters.au.21$wOBA)
+dat.starters.au.21$babip<-(dat.starters.au.21$H-dat.starters.au.21$HR)/(dat.starters.au.21$AB-dat.starters.au.21$K-dat.starters.au.21$HR+dat.starters.au.21$SF)
+dat.starters.au.21$kRate<-(dat.starters.au.21$K/dat.starters.au.21$PA)*100
+dat.starters.au.21$BBrate<-(dat.starters.au.21$BB/dat.starters.au.21$PA)*100
+a<-dat.starters.au.21$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.au.21$PA
+dat.starters.au.21$wraa<-c(wraa)
+dat.starters.au.21$iso<-dat.starters.au.21$SlgPct-dat.starters.au.21$BA
+dat.starters.au.21$wrc<-(dat.starters.au.21$wraa)+(.15)*dat.starters.au.21$PA
+dat.starters.au.21$wrcplus<-c(((dat.starters.au.21$wraa/dat.starters.au.21$PA + 0.15) + (.15 - 1.067 * .15))/(sum(dat.starters.au.21$wrc)/sum(dat.starters.au.21$PA)))*100
+```
+```{r A&M 21, warning=FALSE, include=FALSE}
+data.tam.21<-ncaa_scrape(697, 2022, type = "batting")
+dat.starters.tam.21=subset(data.tam.21, AB > 0)
+dat.starters.tam.21$OPS<-c(dat.starters.tam.21$OBPct + dat.starters.tam.21$SlgPct)
+dat.starters.tam.21[is.na(dat.starters.tam.21)] = 0
+dat.starters.tam.21$single=dat.starters.tam.21$H-(dat.starters.tam.21$`2B`+ dat.starters.tam.21$`3B` + dat.starters.tam.21$HR)
+dat.starters.tam.21$wOBA=c(.69*dat.starters.tam.21$BB + .722*dat.starters.tam.21$HBP + 0.888*dat.starters.tam.21$single + 1.271*dat.starters.tam.21$`2B` + 1.616*dat.starters.tam.21$`3B` + 2.101*dat.starters.tam.21$HR)/(dat.starters.tam.21$AB + dat.starters.tam.21$BB + dat.starters.tam.21$SF + dat.starters.tam.21$HBP)
+wOBA.tam.21<-mean(dat.starters.tam.21$wOBA)
+dat.starters.tam.21$PA=c(dat.starters.tam.21$AB + dat.starters.tam.21$BB + dat.starters.tam.21$HBP + dat.starters.tam.21$SF)
+tPA.tam.21<-sum(dat.starters.tam.21$AB + dat.starters.tam.21$BB + dat.starters.tam.21$HBP + dat.starters.tam.21$SF)
+dat.starters.tam.21$weightedPA<-c(dat.starters.tam.21$PA/tPA.tam.21)
+wwoba.tam.21<-sum(dat.starters.tam.21$weightedPA*dat.starters.tam.21$wOBA)
+dat.starters.tam.21$babip<-(dat.starters.tam.21$H-dat.starters.tam.21$HR)/(dat.starters.tam.21$AB-dat.starters.tam.21$K-dat.starters.tam.21$HR+dat.starters.tam.21$SF)
+dat.starters.tam.21$kRate<-(dat.starters.tam.21$K/dat.starters.tam.21$PA)*100
+dat.starters.tam.21$BBrate<-(dat.starters.tam.21$BB/dat.starters.tam.21$PA)*100
+a<-dat.starters.tam.21$wOBA-.335
+b<-a/1.15
+wraa<-b*dat.starters.tam.21$PA
+dat.starters.tam.21$wraa<-c(wraa)
+dat.starters.tam.21$iso<-dat.starters.tam.21$SlgPct-dat.starters.tam.21$BA
+dat.starters.tam.21$wrc<-(dat.starters.tam.21$wraa)+(.15)*dat.starters.tam.21$PA
+dat.starters.tam.21$wrcplus<-c(((dat.starters.tam.21$wraa/dat.starters.tam.21$PA + 0.15) + (.15 - 1.044 * .15))/(sum(dat.starters.tam.21$wrc)/sum(dat.starters.tam.21$PA)))*100
+```
+
+```{r}
+library(dplyr)
+dat<-full_join(dat.starters, dat.starters.vu)
+dat<-full_join(dat, dat.starters.uf)
+dat<-full_join(dat, dat.starters.ut)
+dat<-full_join(dat, dat.starters.uk)
+dat<-full_join(dat, dat.starters.um)
+dat<-full_join(dat, dat.starters.uscj)
+dat<-full_join(dat, dat.starters.ar.21)
+dat<-full_join(dat, dat.starters.ms.21)
+dat<-full_join(dat, dat.starters.om.21)
+dat<-full_join(dat, dat.starters.lsu.21)
+dat<-full_join(dat, dat.starters.al.21)
+dat<-full_join(dat, dat.starters.au.21)
+dat<-full_join(dat, dat.starters.tam.21)
+```
+
+```{r}
+data<-ncaa_scrape(257, 2022, type = "pitching")
+dat.starters=subset(data, IP > 0)
+dat.starters[is.na(dat.starters)] = 0
+dat.starters$single=dat.starters$H-(dat.starters$`2B-A`+ dat.starters$`3B-A` + dat.starters$`HR-A`)
+dat.starters$babip<-(dat.starters$H-dat.starters$`HR-A`)/(dat.starters$`P-OAB`-dat.starters$SO-dat.starters$`HR-A`+dat.starters$`SFA`)
+dat.starters$OBA<-dat.starters$H/dat.starters$`P-OAB`
+dat.starters$whip<-(dat.starters$BB+dat.starters$H)/dat.starters$IP
+dat.starters$bbrate<-(dat.starters$BB/dat.starters$BF)*100
+dat.starters$krate<-(dat.starters$SO/dat.starters$BF)*100
+dat.starters$hrrate<-(dat.starters$`HR-A`/dat.starters$BF)*100
+dat.starters$kpbb<-dat.starters$SO/dat.starters$BB
+dat.starters$fip<-(13*dat.starters$`HR-A`+3*dat.starters$BB-2*dat.starters$SO)/dat.starters$IP + 3.10
+dat.starters$eraplus<-100*(2-(dat.starters$ERA/5.03)*(1/1.066))
+```
+```{r}
+data.vu<-ncaa_scrape(736, 2022, type = "pitching")
+dat.starters.vu=subset(data.vu, IP > 0)
+dat.starters.vu[is.na(dat.starters.vu)] = 0
+dat.starters.vu$single=dat.starters.vu$H-(dat.starters.vu$`2B-A`+ dat.starters.vu$`3B-A` + dat.starters.vu$`HR-A`)
+dat.starters.vu$babip<-(dat.starters.vu$H-dat.starters.vu$`HR-A`)/(dat.starters.vu$`P-OAB`-dat.starters.vu$SO-dat.starters.vu$`HR-A`+dat.starters.vu$`SFA`)
+dat.starters.vu$OBA<-dat.starters.vu$H/dat.starters.vu$`P-OAB`
+dat.starters.vu$whip<-(dat.starters.vu$BB+dat.starters.vu$H)/dat.starters.vu$IP
+dat.starters.vu$bbrate<-(dat.starters.vu$BB/dat.starters.vu$BF)*100
+dat.starters.vu$krate<-(dat.starters.vu$SO/dat.starters.vu$BF)*100
+dat.starters.vu$hrrate<-(dat.starters.vu$`HR-A`/dat.starters.vu$BF)*100
+dat.starters.vu$kpbb<-dat.starters.vu$SO/dat.starters.vu$BB
+dat.starters.vu$fip<-(13*dat.starters.vu$`HR-A`+3*dat.starters.vu$BB-2*dat.starters.vu$SO)/dat.starters.vu$IP + 3.10
+dat.starters.vu$eraplus<-100*(2-(dat.starters.vu$ERA/5.03)*(1/.960))
+```
+```{r}
+data.uf<-ncaa_scrape(235, 2022, type = "pitching")
+dat.starters.uf=subset(data.uf, IP > 0)
+dat.starters.uf[is.na(dat.starters.uf)] = 0
+dat.starters.uf$single=dat.starters.uf$H-(dat.starters.uf$`2B-A`+ dat.starters.uf$`3B-A` + dat.starters.uf$`HR-A`)
+dat.starters.uf$babip<-(dat.starters.uf$H-dat.starters.uf$`HR-A`)/(dat.starters.uf$`P-OAB`-dat.starters.uf$SO-dat.starters.uf$`HR-A`+dat.starters.uf$`SFA`)
+dat.starters.uf$OBA<-dat.starters.uf$H/dat.starters.uf$`P-OAB`
+dat.starters.uf$whip<-(dat.starters.uf$BB+dat.starters.uf$H)/dat.starters.uf$IP
+dat.starters.uf$bbrate<-(dat.starters.uf$BB/dat.starters.uf$BF)*100
+dat.starters.uf$krate<-(dat.starters.uf$SO/dat.starters.uf$BF)*100
+dat.starters.uf$hrrate<-(dat.starters.uf$`HR-A`/dat.starters.uf$BF)*100
+dat.starters.uf$kpbb<-dat.starters.uf$SO/dat.starters.uf$BB
+dat.starters.uf$fip<-(13*dat.starters.uf$`HR-A`+3*dat.starters.uf$BB-2*dat.starters.uf$SO)/dat.starters.uf$IP + 3.10
+dat.starters.uf$eraplus<-100*(2-(dat.starters.uf$ERA/5.03)*(1/1.082))
+```
+```{r}
+data.ut<-ncaa_scrape(694, 2022, type = "pitching")
+dat.starters.ut=subset(data.ut, IP > 0)
+dat.starters.ut[is.na(dat.starters.ut)] = 0
+dat.starters.ut$single=dat.starters.ut$H-(dat.starters.ut$`2B-A`+ dat.starters.ut$`3B-A` + dat.starters.ut$`HR-A`)
+dat.starters.ut$babip<-(dat.starters.ut$H-dat.starters.ut$`HR-A`)/(dat.starters.ut$`P-OAB`-dat.starters.ut$SO-dat.starters.ut$`HR-A`+dat.starters.ut$`SFA`)
+dat.starters.ut$OBA<-dat.starters.ut$H/dat.starters.ut$`P-OAB`
+dat.starters.ut$whip<-(dat.starters.ut$BB+dat.starters.ut$H)/dat.starters.ut$IP
+dat.starters.ut$bbrate<-(dat.starters.ut$BB/dat.starters.ut$BF)*100
+dat.starters.ut$krate<-(dat.starters.ut$SO/dat.starters.ut$BF)*100
+dat.starters.ut$hrrate<-(dat.starters.ut$`HR-A`/dat.starters.ut$BF)*100
+dat.starters.ut$kpbb<-dat.starters.ut$SO/dat.starters.ut$BB
+dat.starters.ut$fip<-(13*dat.starters.ut$`HR-A`+3*dat.starters.ut$BB-2*dat.starters.ut$SO)/dat.starters.ut$IP + 3.10
+dat.starters.ut$eraplus<-100*(2-(dat.starters.ut$ERA/5.03)*(1/.993))
+```
+```{r}
+data.uk<-ncaa_scrape(334, 2022, type = "pitching")
+dat.starters.uk=subset(data.uk, IP > 0)
+dat.starters.uk[is.na(dat.starters.uk)] = 0
+dat.starters.uk$single=dat.starters.uk$H-(dat.starters.uk$`2B-A`+ dat.starters.uk$`3B-A` + dat.starters.uk$`HR-A`)
+dat.starters.uk$babip<-(dat.starters.uk$H-dat.starters.uk$`HR-A`)/(dat.starters.uk$`P-OAB`-dat.starters.uk$SO-dat.starters.uk$`HR-A`+dat.starters.uk$`SFA`)
+dat.starters.uk$OBA<-dat.starters.uk$H/dat.starters.uk$`P-OAB`
+dat.starters.uk$whip<-(dat.starters.uk$BB+dat.starters.uk$H)/dat.starters.uk$IP
+dat.starters.uk$bbrate<-(dat.starters.uk$BB/dat.starters.uk$BF)*100
+dat.starters.uk$krate<-(dat.starters.uk$SO/dat.starters.uk$BF)*100
+dat.starters.uk$hrrate<-(dat.starters.uk$`HR-A`/dat.starters.uk$BF)*100
+dat.starters.uk$kpbb<-dat.starters.uk$SO/dat.starters.uk$BB
+dat.starters.uk$fip<-(13*dat.starters.uk$`HR-A`+3*dat.starters.uk$BB-2*dat.starters.uk$SO)/dat.starters.uk$IP + 3.10
+dat.starters.uk$eraplus<-100*(2-(dat.starters.uk$ERA/5.03)*(1/1.055))
+```
+```{r}
+data.um<-ncaa_scrape(434, 2022, type = "pitching")
+dat.starters.um=subset(data.um, IP > 0)
+dat.starters.um[is.na(dat.starters.um)] = 0
+dat.starters.um$single=dat.starters.um$H-(dat.starters.um$`2B-A`+ dat.starters.um$`3B-A` + dat.starters.um$`HR-A`)
+dat.starters.um$babip<-(dat.starters.um$H-dat.starters.um$`HR-A`)/(dat.starters.um$`P-OAB`-dat.starters.um$SO-dat.starters.um$`HR-A`+dat.starters.um$`SFA`)
+dat.starters.um$OBA<-dat.starters.um$H/dat.starters.um$`P-OAB`
+dat.starters.um$whip<-(dat.starters.um$BB+dat.starters.um$H)/dat.starters.um$IP
+dat.starters.um$bbrate<-(dat.starters.um$BB/dat.starters.um$BF)*100
+dat.starters.um$krate<-(dat.starters.um$SO/dat.starters.um$BF)*100
+dat.starters.um$hrrate<-(dat.starters.um$`HR-A`/dat.starters.um$BF)*100
+dat.starters.um$kpbb<-dat.starters.um$SO/dat.starters.um$BB
+dat.starters.um$fip<-(13*dat.starters.um$`HR-A`+3*dat.starters.um$BB-2*dat.starters.um$SO)/dat.starters.um$IP + 3.10
+dat.starters.um$eraplus<-100*(2-(dat.starters.um$ERA/5.03)*(1/1.042))
+```
+```{r}
+data.uscj<-ncaa_scrape(648, 2022, type = "pitching")
+dat.starters.uscj=subset(data.uscj, IP > 0)
+dat.starters.uscj[is.na(dat.starters.uscj)] = 0
+dat.starters.uscj$single=dat.starters.uscj$H-(dat.starters.uscj$`2B-A`+ dat.starters.uscj$`3B-A` + dat.starters.uscj$`HR-A`)
+dat.starters.uscj$babip<-(dat.starters.uscj$H-dat.starters.uscj$`HR-A`)/(dat.starters.uscj$`P-OAB`-dat.starters.uscj$SO-dat.starters.uscj$`HR-A`+dat.starters.uscj$`SFA`)
+dat.starters.uscj$OBA<-dat.starters.uscj$H/dat.starters.uscj$`P-OAB`
+dat.starters.uscj$whip<-(dat.starters.uscj$BB+dat.starters.uscj$H)/dat.starters.uscj$IP
+dat.starters.uscj$bbrate<-(dat.starters.uscj$BB/dat.starters.uscj$BF)*100
+dat.starters.uscj$krate<-(dat.starters.uscj$SO/dat.starters.uscj$BF)*100
+dat.starters.uscj$hrrate<-(dat.starters.uscj$`HR-A`/dat.starters.uscj$BF)*100
+dat.starters.uscj$kpbb<-dat.starters.uscj$SO/dat.starters.uscj$BB
+dat.starters.uscj$fip<-(13*dat.starters.uscj$`HR-A`+3*dat.starters.uscj$BB-2*dat.starters.uscj$SO)/dat.starters.uscj$IP + 3.10
+dat.starters.uscj$eraplus<-100*(2-(dat.starters.uscj$ERA/5.03)*(1/1.017))
+```
+```{r}
+data.ar.21<-ncaa_scrape(31, 2022, type = "pitching")
+dat.starters.ar.21=subset(data.ar.21, IP > 0)
+dat.starters.ar.21[is.na(dat.starters.ar.21)] = 0
+dat.starters.ar.21$single=dat.starters.ar.21$H-(dat.starters.ar.21$`2B-A`+ dat.starters.ar.21$`3B-A` + dat.starters.ar.21$`HR-A`)
+dat.starters.ar.21$babip<-(dat.starters.ar.21$H-dat.starters.ar.21$`HR-A`)/(dat.starters.ar.21$`P-OAB`-dat.starters.ar.21$SO-dat.starters.ar.21$`HR-A`+dat.starters.ar.21$`SFA`)
+dat.starters.ar.21$OBA<-dat.starters.ar.21$H/dat.starters.ar.21$`P-OAB`
+dat.starters.ar.21$whip<-(dat.starters.ar.21$BB+dat.starters.ar.21$H)/dat.starters.ar.21$IP
+dat.starters.ar.21$bbrate<-(dat.starters.ar.21$BB/dat.starters.ar.21$BF)*100
+dat.starters.ar.21$krate<-(dat.starters.ar.21$SO/dat.starters.ar.21$BF)*100
+dat.starters.ar.21$hrrate<-(dat.starters.ar.21$`HR-A`/dat.starters.ar.21$BF)*100
+dat.starters.ar.21$kpbb<-dat.starters.ar.21$SO/dat.starters.ar.21$BB
+dat.starters.ar.21$fip<-(13*dat.starters.ar.21$`HR-A`+3*dat.starters.ar.21$BB-2*dat.starters.ar.21$SO)/dat.starters.ar.21$IP + 3.10
+dat.starters.ar.21$eraplus<-100*(2-(dat.starters.ar.21$ERA/5.03)*(1/1.113))
+```
+```{r}
+data.ms.21<-ncaa_scrape(430, 2022, type = "pitching")
+dat.starters.ms.21=subset(data.ms.21, IP > 0)
+dat.starters.ms.21[is.na(dat.starters.ms.21)] = 0
+dat.starters.ms.21$single=dat.starters.ms.21$H-(dat.starters.ms.21$`2B-A`+ dat.starters.ms.21$`3B-A` + dat.starters.ms.21$`HR-A`)
+dat.starters.ms.21$babip<-(dat.starters.ms.21$H-dat.starters.ms.21$`HR-A`)/(dat.starters.ms.21$`P-OAB`-dat.starters.ms.21$SO-dat.starters.ms.21$`HR-A`+dat.starters.ms.21$`SFA`)
+dat.starters.ms.21$OBA<-dat.starters.ms.21$H/dat.starters.ms.21$`P-OAB`
+dat.starters.ms.21$whip<-(dat.starters.ms.21$BB+dat.starters.ms.21$H)/dat.starters.ms.21$IP
+dat.starters.ms.21$bbrate<-(dat.starters.ms.21$BB/dat.starters.ms.21$BF)*100
+dat.starters.ms.21$krate<-(dat.starters.ms.21$SO/dat.starters.ms.21$BF)*100
+dat.starters.ms.21$hrrate<-(dat.starters.ms.21$`HR-A`/dat.starters.ms.21$BF)*100
+dat.starters.ms.21$kpbb<-dat.starters.ms.21$SO/dat.starters.ms.21$BB
+dat.starters.ms.21$fip<-(13*dat.starters.ms.21$`HR-A`+3*dat.starters.ms.21$BB-2*dat.starters.ms.21$SO)/dat.starters.ms.21$IP + 3.10
+dat.starters.ms.21$eraplus<-100*(2-(dat.starters.ms.21$ERA/5.03)*(1/1.201))
+```
+```{r}
+data.om.21<-ncaa_scrape(433, 2022, type = "pitching")
+dat.starters.om.21=subset(data.om.21, IP > 0)
+dat.starters.om.21[is.na(dat.starters.om.21)] = 0
+dat.starters.om.21$single=dat.starters.om.21$H-(dat.starters.om.21$`2B-A`+ dat.starters.om.21$`3B-A` + dat.starters.om.21$`HR-A`)
+dat.starters.om.21$babip<-(dat.starters.om.21$H-dat.starters.om.21$`HR-A`)/(dat.starters.om.21$`P-OAB`-dat.starters.om.21$SO-dat.starters.om.21$`HR-A`+dat.starters.om.21$`SFA`)
+dat.starters.om.21$OBA<-dat.starters.om.21$H/dat.starters.om.21$`P-OAB`
+dat.starters.om.21$whip<-(dat.starters.om.21$BB+dat.starters.om.21$H)/dat.starters.om.21$IP
+dat.starters.om.21$bbrate<-(dat.starters.om.21$BB/dat.starters.om.21$BF)*100
+dat.starters.om.21$krate<-(dat.starters.om.21$SO/dat.starters.om.21$BF)*100
+dat.starters.om.21$hrrate<-(dat.starters.om.21$`HR-A`/dat.starters.om.21$BF)*100
+dat.starters.om.21$kpbb<-dat.starters.om.21$SO/dat.starters.om.21$BB
+dat.starters.om.21$fip<-(13*dat.starters.om.21$`HR-A`+3*dat.starters.om.21$BB-2*dat.starters.om.21$SO)/dat.starters.om.21$IP + 3.10
+dat.starters.om.21$eraplus<-100*(2-(dat.starters.om.21$ERA/5.03)*(1/1.093))
+```
+```{r}
+data.lsu.21<-ncaa_scrape(365, 2022, type = "pitching")
+dat.starters.lsu.21=subset(data.lsu.21, IP > 0)
+dat.starters.lsu.21[is.na(dat.starters.lsu.21)] = 0
+dat.starters.lsu.21$single=dat.starters.lsu.21$H-(dat.starters.lsu.21$`2B-A`+ dat.starters.lsu.21$`3B-A` + dat.starters.lsu.21$`HR-A`)
+dat.starters.lsu.21$babip<-(dat.starters.lsu.21$H-dat.starters.lsu.21$`HR-A`)/(dat.starters.lsu.21$`P-OAB`-dat.starters.lsu.21$SO-dat.starters.lsu.21$`HR-A`+dat.starters.lsu.21$`SFA`)
+dat.starters.lsu.21$OBA<-dat.starters.lsu.21$H/dat.starters.lsu.21$`P-OAB`
+dat.starters.lsu.21$whip<-(dat.starters.lsu.21$BB+dat.starters.lsu.21$H)/dat.starters.lsu.21$IP
+dat.starters.lsu.21$bbrate<-(dat.starters.lsu.21$BB/dat.starters.lsu.21$BF)*100
+dat.starters.lsu.21$krate<-(dat.starters.lsu.21$SO/dat.starters.lsu.21$BF)*100
+dat.starters.lsu.21$hrrate<-(dat.starters.lsu.21$`HR-A`/dat.starters.lsu.21$BF)*100
+dat.starters.lsu.21$kpbb<-dat.starters.lsu.21$SO/dat.starters.lsu.21$BB
+dat.starters.lsu.21$fip<-(13*dat.starters.lsu.21$`HR-A`+3*dat.starters.lsu.21$BB-2*dat.starters.lsu.21$SO)/dat.starters.lsu.21$IP + 3.10
+dat.starters.lsu.21$eraplus<-100*(2-(dat.starters.lsu.21$ERA/5.03)*(1/1.104))
+```
+```{r}
+data.al.21<-ncaa_scrape(8, 2022, type = "pitching")
+dat.starters.al.21=subset(data.al.21, IP > 0)
+dat.starters.al.21[is.na(dat.starters.al.21)] = 0
+dat.starters.al.21$single=dat.starters.al.21$H-(dat.starters.al.21$`2B-A`+ dat.starters.al.21$`3B-A` + dat.starters.al.21$`HR-A`)
+dat.starters.al.21$babip<-(dat.starters.al.21$H-dat.starters.al.21$`HR-A`)/(dat.starters.al.21$`P-OAB`-dat.starters.al.21$SO-dat.starters.al.21$`HR-A`+dat.starters.al.21$`SFA`)
+dat.starters.al.21$OBA<-dat.starters.al.21$H/dat.starters.al.21$`P-OAB`
+dat.starters.al.21$whip<-(dat.starters.al.21$BB+dat.starters.al.21$H)/dat.starters.al.21$IP
+dat.starters.al.21$bbrate<-(dat.starters.al.21$BB/dat.starters.al.21$BF)*100
+dat.starters.al.21$krate<-(dat.starters.al.21$SO/dat.starters.al.21$BF)*100
+dat.starters.al.21$hrrate<-(dat.starters.al.21$`HR-A`/dat.starters.al.21$BF)*100
+dat.starters.al.21$kpbb<-dat.starters.al.21$SO/dat.starters.al.21$BB
+dat.starters.al.21$fip<-(13*dat.starters.al.21$`HR-A`+3*dat.starters.al.21$BB-2*dat.starters.al.21$SO)/dat.starters.al.21$IP + 3.10
+dat.starters.al.21$eraplus<-100*(2-(dat.starters.al.21$ERA/5.03)*(1/1.018))
+```
+```{r}
+data.au.21<-ncaa_scrape(37, 2022, type = "pitching")
+dat.starters.au.21=subset(data.au.21, IP > 0)
+dat.starters.au.21[is.na(dat.starters.au.21)] = 0
+dat.starters.au.21$single=dat.starters.au.21$H-(dat.starters.au.21$`2B-A`+ dat.starters.au.21$`3B-A` + dat.starters.au.21$`HR-A`)
+dat.starters.au.21$babip<-(dat.starters.au.21$H-dat.starters.au.21$`HR-A`)/(dat.starters.au.21$`P-OAB`-dat.starters.au.21$SO-dat.starters.au.21$`HR-A`+dat.starters.au.21$`SFA`)
+dat.starters.au.21$OBA<-dat.starters.au.21$H/dat.starters.au.21$`P-OAB`
+dat.starters.au.21$whip<-(dat.starters.au.21$BB+dat.starters.au.21$H)/dat.starters.au.21$IP
+dat.starters.au.21$bbrate<-(dat.starters.au.21$BB/dat.starters.au.21$BF)*100
+dat.starters.au.21$krate<-(dat.starters.au.21$SO/dat.starters.au.21$BF)*100
+dat.starters.au.21$hrrate<-(dat.starters.au.21$`HR-A`/dat.starters.au.21$BF)*100
+dat.starters.au.21$kpbb<-dat.starters.au.21$SO/dat.starters.au.21$BB
+dat.starters.au.21$fip<-(13*dat.starters.au.21$`HR-A`+3*dat.starters.au.21$BB-2*dat.starters.au.21$SO)/dat.starters.au.21$IP + 3.10
+dat.starters.au.21$eraplus<-100*(2-(dat.starters.au.21$ERA/5.03)*(1/1.067))
+```
+```{r}
+data.tam.21<-ncaa_scrape(697, 2022, type = "pitching")
+dat.starters.tam.21=subset(data.tam.21, IP > 0)
+dat.starters.tam.21[is.na(dat.starters.tam.21)] = 0
+dat.starters.tam.21$single=dat.starters.tam.21$H-(dat.starters.tam.21$`2B-A`+ dat.starters.tam.21$`3B-A` + dat.starters.tam.21$`HR-A`)
+dat.starters.tam.21$babip<-(dat.starters.tam.21$H-dat.starters.tam.21$`HR-A`)/(dat.starters.tam.21$`P-OAB`-dat.starters.tam.21$SO-dat.starters.tam.21$`HR-A`+dat.starters.tam.21$`SFA`)
+dat.starters.tam.21$OBA<-dat.starters.tam.21$H/dat.starters.tam.21$`P-OAB`
+dat.starters.tam.21$whip<-(dat.starters.tam.21$BB+dat.starters.tam.21$H)/dat.starters.tam.21$IP
+dat.starters.tam.21$bbrate<-(dat.starters.tam.21$BB/dat.starters.tam.21$BF)*100
+dat.starters.tam.21$krate<-(dat.starters.tam.21$SO/dat.starters.tam.21$BF)*100
+dat.starters.tam.21$hrrate<-(dat.starters.tam.21$`HR-A`/dat.starters.tam.21$BF)*100
+dat.starters.tam.21$kpbb<-dat.starters.tam.21$SO/dat.starters.tam.21$BB
+dat.starters.tam.21$fip<-(13*dat.starters.tam.21$`HR-A`+3*dat.starters.tam.21$BB-2*dat.starters.tam.21$SO)/dat.starters.tam.21$IP + 3.10
+dat.starters.tam.21$eraplus<-100*(2-(dat.starters.tam.21$ERA/5.03)*(1/1.044))
+```
+
+Following this past weekend's series, we have eclipsed the halfway mark of this year's college baseball season. That means it's time to give out some mid season conference awards, starting with the SEC. 
+
+*Note that I am giving out these awards as if the season ended today.  
+
+First on the ballot is the SEC Player of the Year. Tennessee has been must see TV this year, and because of this most of the national attention has been, rightly, given to them. This has allowed my SEC Player of the Year this year to fly mostly under the radar. Auburn first baseman Sonny DiChiara, a transfer from Samford, has been one of the best players you have never heard of all year. He's slashing .419/.857/1.437 this year with 11 homeruns and 33 rbi. His walk rate (24.7%) is almost double his strikeout rate (13.3%), and he has a wRC+ of 191. Sonny is my choice for Player of the Year. Honorable mentions for the award go to Dominic Keegan of the Vanderbilt Commodores and pitchers Chase Burns and Drew Beam from the aforementioned Tennessee Volunteers. 
+
+Next, SEC Pitcher of the Year. The whole Tennessee pitching staff could lay some claim to this award. With a staff era in the 2's this year, the Volunteers have been virtually unhittable. Freshman Chase Burns has garnered a lot of national attention as he has been thrust into the Friday night starter role with with the injury to Blade Tidwell to start the year and is many people's front runner for this award. However, I'm taking his teammate Drew Beam, another freshman. In 9 starts this season, Beam has a 1.50 era and hitters are hitting a miniscule .127 off of him this year. He's striking out 24% of batters he's faced this year and has an ERA+ of 169. His FIP (2.69) isn't as good as honorable mentions Jonathan Cannon (1.60) or his other teammate Chase Dollander (1.90), but given that he has the most innings of the three, the choice is clear. 
+
+The Coach of the Year is a one horse race this year. Tony Vitello's Volunteers are undeniably the number one team in the nation to this point and are playing with the confidence of their coach. I want to mention some other coaches whose teams have exceeded expectations this year. Jim Schlossnagle, head coach at Texas A&M,has transformed the Aggies from a team who just last year finished last in the West, to being one win away from matching their win total in conference from last year and have impressive road series victories against then top 10 LSU and my top 15 ranked Georgia Bulldogs. Staying in the West, Butch Thompson at Auburn has, similarly to Schlossnagle, rejuvenated the Tigers from a poor 2021 to being tied for second in the West with A&M and have a serious POTY candidate in Sonny DiChiara. 
+
+It would be easy to pencil in Drew Beam as Freshman of the Year and move on, but that's no fun and I want to shine a light on an exciting crop of freshman that the SEC has this year. Chase Burns was thrust into a Friday night starter role and has embraced the spotlight. Over 44.2 innings this year, Burns has a 2.22 ERA, holding opponents to a .190 batting average. He's also striking out 33% of the batters he has faced. His ERA+ is 155 and his FIP is 3.12. Burns' teammate, Jared Dickey, can also lay claim to the crown of Freshman of the Year. He's slashing .384/.744/1.225, mostly as the Volunteer's DH. His wOBA and wRC+ are both outstanding at .510 and 119 respectively. The final freshman I'm going to mention is Cole Wagner, OF/DH hybrid for Georgia this season. He's slashing .325/.475/.890 with a wOBA of .394, he has a tendency to strike out (22%) but still maintains a wRC+ of 103 and will only get better as he matures and cuts down on his strike outs. 
+
+FIRST TEAM ALL-SEC
+C: Michael Turner Arkansas
+1B: Sonny DiChiara Auburn
+2B: Cade Doughty LSU
+SS: Jacob Gonzalez Ole Miss
+3B: Chase Estep Kentucky
+OF: Dylan Rock Texas A&M
+OF: Jud Fabian Florida 
+OF: Dylan Crews LSU
+UT/DH: Dominic Keegan Vanderbilt
+P: Drew Beam Tennessee
+P: Jonathan Cannon Georgia
+P: Joseph Gonzalez Alabama
+P: Will Mabrey Tennessee 
+
+SECOND TEAM ALL-SEC
+C: Corey Collins Georgia
+1B: Brandt Belk South Carolina 
+2B: Austin Bost Texas A&M
+SS: Josh Day Missouri
+3B: Trey Lipscomb Tennessee
+OF: Jordan Beck Tennessee
+OF: Drew Gilbert Tennessee
+OF: Andrew Eyster South Carolina
+UT/DH: Tim Elko Ole Miss 
+P: Chase Burns Tennessee
+P: Hunter Barco Florida 
+P: Connor Noland Arkansas
+P: Blake Purnell Florida 
+
+Honorable Mentions:
+P: Chase Dollander 
+OF: Spencer Jones
+OF: Wyatt Langford
+P: Redmond Walsh
+P: Grayson Hitt 
+OF: Ben Anderson 
+OF/DH: Jared Dickey
+
+There were a couple positions where first and second team are almost interchangeable. At catcher, I initially went with Corey Collins who has a wRC+ of 128 and wOBA of .444, but his defense leaves something to be desired and opted to lose a little offense with Michael Turner who makes up for it with his defense. At shortstop, Jacob Gonzalez and Josh Day are neck and neck, but I opted to go with Gonzalez's slightly better slash line (.287/.656/1.092) vs. (.336/.560/1.004) and Gonzalez also had a better wOBA (.460 vs .437) with a worse wRC+ (126 vs. 129). Hunter Barco was in the mix for Pitcher of the Year and a First Team spot for most of the year, but has struggled recently which has contributed to his drop into the second team. 
+
+ALL-SEC Team Totals
+Tennessee: 6
+Florida: 3
+Georgia: 2
+LSU: 2
+Ole Miss: 2
+Texas A&M: 2
+Arkansas: 2
+South Carolina: 2
+Missouri: 1
+Auburn: 1
+Kentucky 1
+Alabama: 1
+Vanderbilt: 1
+Misissippi State: 0
+
+Finally, the ALL-SEC Freshman Team
+Hunter Hines Mississippi State
+Jared Dickey Tennessee
+Davis Diaz Vanderbilt
+Michael Braswell South Carolina
+Cole Wagner Georgia
+Peyton Stovall Arkansas
+Christian Moore Tennessee
+Samuel Dutton LSU
+Chase Burns Tennessee
+Drew Beam Tennessee
+Khristian Curtis Texas A&M
